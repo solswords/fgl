@@ -52,7 +52,8 @@
    (intro-synvars booleanp :default t)
    (simplify-logic booleanp :default t)
    (trace-rewrites booleanp :default nil)
-   (make-ites booleanp :default nil)))
+   (make-ites booleanp :default nil)
+   (branch-on-ifs booleanp :default t)))
 
 (local (defthm unsigned-byte-p-of-flags
          (implies (interp-flags-p flags)
@@ -658,6 +659,24 @@
              (ok)
              (lbfr-listp x)
              ok))
+
+(define interp-st-gl-bfr-object-fix ((x gl-object-p) &optional (interp-st 'interp-st))
+  :guard (interp-st-bfr-listp (gl-object-bfrlist x))
+  :enabled t
+  (mbe :logic (stobj-let ((logicman (interp-st->logicman interp-st)))
+                         (new-x)
+                         (lgl-bfr-object-fix x)
+                         new-x)
+       :exec x))
+
+(define interp-st-gl-bfr-objectlist-fix ((x gl-objectlist-p) &optional (interp-st 'interp-st))
+  :guard (interp-st-bfr-listp (gl-objectlist-bfrlist x))
+  :enabled t
+  (mbe :logic (stobj-let ((logicman (interp-st->logicman interp-st)))
+                         (new-x)
+                         (lgl-bfr-objectlist-fix x)
+                         new-x)
+       :exec x))
 
 
 (define interp-st-bfr-mode (&optional (interp-st 'interp-st))
